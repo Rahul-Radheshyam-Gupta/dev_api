@@ -49,9 +49,9 @@ def get_profile_stats(profile):
             'total': answers.count(),
             'approved': answers.count()
         },
-        'report':{
-            'total':
-        }
+        # 'report':{
+        #     'total':
+        # }
 
     }
     return result

@@ -30,7 +30,7 @@ def get_profile_stats(profile):
     """
     questions = profile.questions_by_profile.filter(is_active=True)
     answers = profile.answers_by_profile.filter(is_active=True)
-    reports = profile.reports_by_profile.filter(is_active=True)
+    reports = profile.reports_by_profile.all()
     up_votes_count = questions.aggregate(up_vote_count=Coalesce(Sum('up_votes'), 0))['up_vote_count']
     down_votes_count = questions.aggregate(down_vote_count=Coalesce(Sum('down_votes'), 0))['down_vote_count']
     result = {
@@ -49,10 +49,11 @@ def get_profile_stats(profile):
             'total': answers.count(),
             'approved': answers.count()
         },
-        # 'report':{
-        #     'total':
-        # }
-
+        'report': {
+            'total': reports.count(),
+            'closed': reports.filter(is_resolved=True).count(),
+            'open': reports.filter(is_resolved=False).count()
+        }
     }
     return result
 

@@ -6,6 +6,8 @@ from rest_framework import serializers
 class CategorySerializer(serializers.ModelSerializer):
     """Category Serializer"""
     url = serializers.HyperlinkedIdentityField(read_only=True, view_name='get-profile-detail')
+    first_name = serializers.CharField(source='created_by.first_name', read_only=True)
+    last_name = serializers.CharField(source='created_by.last_name', read_only=True)
 
     class Meta:
         model = Category
@@ -43,6 +45,8 @@ class AnswerSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(read_only=True, view_name='answer-detail')
     is_active = serializers.BooleanField(default=True, required=False)
     question_id = serializers.CharField(source='question.id', read_only=True)
+    created_by = GetProfileModelSerializer()
+
     class Meta:
         model = Answer
         fields = '__all__'

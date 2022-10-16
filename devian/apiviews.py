@@ -67,6 +67,8 @@ class QuestionApiview(ModelViewSet):
             if is_datatabe_format:
                 status = self.request.query_params.get('status', PENDING)
                 queryset = queryset.filter(status=status)
+                if not self.request.user.profile.is_super_admin:
+                    queryset = queryset.filter(created_by=self.request.user.profile)
             else:
                 queryset = queryset.filter(status=APPROVED)
 
@@ -116,6 +118,12 @@ class AnswerApiview(ModelViewSet):
         return queryset
     # lookup_field = 'id'
     serializer_class = AnswerSerializer
+
+    def create(self, request, *args, **kwargs):
+        answer_text = request.data.get('answer_text')
+        question_id = request.data.get('question_id')
+        answer = Answer.objects.create(question_id=question_id, answer_text=answer_text, created_by=self.request.user.profile)
+        return Response({'success': True}, status=200)
 
     def update(self, request, *args, **kwargs):
         print("===============================", request.data)
@@ -185,6 +193,9 @@ class ReportApiview(ModelViewSet):
         report_for = self.request.GET.get('report_for')
         if report_for:
             queryset = queryset.filter(report_for=report_for)
+
+        if not self.request.user.profile.is_super_admin:
+            queryset = queryset.filter(created_by=self.request.user.profile)
         return queryset
 
     def update(self, request, *args, **kwargs):

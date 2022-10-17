@@ -121,9 +121,10 @@ class AnswerApiview(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         answer_text = request.data.get('answer_text')
-        question_id = request.data.get('question_id')
+        question_id = request.data.get('question')
         answer = Answer.objects.create(question_id=question_id, answer_text=answer_text, created_by=self.request.user.profile)
-        return Response({'success': True}, status=200)
+        serializer = self.serializer_class(answer, context={'request': request})
+        return Response(serializer.data, status=200)
 
     def update(self, request, *args, **kwargs):
         print("===============================", request.data)

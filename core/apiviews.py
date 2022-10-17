@@ -117,7 +117,8 @@ class GetProfileApiview(GenericViewSet, mixins.ListModelMixin):
 
     def get_queryset(self):
         queryset = Profile.objects.all()
-        if self.request.method == "GET":
+        is_datatabe_format = self.request.query_params.get('format') == 'datatables'
+        if self.request.method == "GET" and not is_datatabe_format:
             queryset = Profile.objects.filter(user=self.request.user)
         return queryset
     serializer_class = GetProfileModelSerializer

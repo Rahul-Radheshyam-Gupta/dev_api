@@ -48,7 +48,7 @@ class Answer(models.Model):
     up_vote_list = models.TextField(default="[]")
     down_vote_list = models.TextField(default="[]")
     is_approved = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

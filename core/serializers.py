@@ -23,7 +23,9 @@ class GetProfileModelSerializer(serializers.ModelSerializer):
                         Default is 'pk'
     """
     url = serializers.HyperlinkedIdentityField(read_only=True, view_name='get-profile-detail')
-
+    user_name = serializers.CharField(source='user.username', read_only=True)
+    added_by_first_name = serializers.CharField(source='added_by.first_name', read_only=True)
+    added_by_last_name = serializers.CharField(source='added_by.last_name', read_only=True)
     class Meta:
         model = Profile
         fields = '__all__'

@@ -102,13 +102,25 @@ class ProfileApiview(GenericViewSet, mixins.CreateModelMixin, mixins.UpdateModel
         user_with_username = User.objects.filter(username=username).exists()
         user_with_email = User.objects.filter(email=email).exists()
         if user_with_username or user_with_email:
-            duplicate_field_error = f'user name - {username}' if user_with_username else f'email - {email}'
+            duplicate_field_error = f'duplicate user name - {username}' if user_with_username else f'email - {email}'
             raise ValidationError(duplicate_field_error)
         profile = Profile.objects.create(email=email)
         if profile:
             user = User.objects.create_user(username, email, password)
             profile.user = user
             profile.save()
+
+        if request.data.get('added_by_admin', False) == 'true':
+            print("added by Admin")
+            list_of_setattr_for_value = ['gender', 'contact_number', 'first_name', 'last_name']
+            for field_name in list_of_setattr_for_value:
+                setattr(profile, field_name, request.data.get(field_name))
+            list_of_setattr_for_boolean = ['is_verified', 'is_super_admin']
+            for field_name in list_of_setattr_for_boolean:
+                setattr(profile, field_name, request.data.get(field_name) == 'true')
+            profile.added_by = request.user.profile
+            profile.save()
+            print("successfully updated profile..")
         return Response({'success': True}, status=status.HTTP_201_CREATED)
 
 

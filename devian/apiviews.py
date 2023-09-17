@@ -22,7 +22,6 @@ class CategoryApiview(ModelViewSet):
             else:
                 queryset = queryset.filter(status=APPROVED)
         return queryset
-
     # lookup_field = 'id'
     serializer_class = CategorySerializer
 
@@ -48,7 +47,8 @@ class CategoryApiview(ModelViewSet):
 
 class QuestionApiview(ModelViewSet):
     permission_classes = (IsAuthenticated,)
-    def get_queryset(self):
+
+    def queryset_filter_pagination(self):
         page_count = self.request.GET.get('question_page_count', None)
         question_id = self.kwargs.get('pk')
         queryset = Question.objects.filter(is_active=True)
@@ -80,6 +80,9 @@ class QuestionApiview(ModelViewSet):
             queryset = queryset[start:end]
             print("slice done............", question_id)
         return queryset
+    
+    def get_queryset(self):
+        return self.queryset_filter_pagination()
     # lookup_field = 'id'
     serializer_class = QuestionSerializer
 
